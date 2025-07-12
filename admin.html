@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard - MiniShop</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header>
+  <div class="logo">MiniShop Admin</div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="products.html">Products</a>
+    <a href="cart.html">Cart</a>
+    <a href="profile.html">Profile</a>
+  </nav>
+</header>
+
+<main class="admin-panel">
+  <h1>Admin Dashboard</h1>
+
+  <h2>Add Product</h2>
+  <form id="productForm">
+    <input type="text" id="name" placeholder="Product Name" required />
+    <input type="number" id="price" placeholder="Price" required />
+    <input type="text" id="image" placeholder="Image URL" required />
+    <textarea id="description" placeholder="Description"></textarea>
+    <button type="submit">Add Product</button>
+  </form>
+
+
+ 
+
+
+  <h2>All Products</h2>
+  <div id="adminProductList">Loading...</div>
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const productForm = document.getElementById("productForm");
+ 
+  const productList = document.getElementById("adminProductList");
+
+  // Submit new product
+  productForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    const name = document.getElementById("name").value;
+    const price = document.getElementById("price").value;
+    const image = document.getElementById("image").value;
+    const description = document.getElementById("description").value;
+
+    fetch("http://localhost:5000/api/products", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, price, image, description })
+    })
+      .then(res => res.json())
+      .then(data => {
+        alert("Product added!");
+        productForm.reset();
+        loadProducts();
+      });
+  });
+
+
+    // Load all products
+    function loadProducts() {
+      fetch("http://localhost:5000/api/products")
+        .then(res => res.json())
+        .then(products => {
+          if (!products.length) {
+            productList.innerHTML = "<p>No products found.</p>";
+            return;
+          }
+
+          productList.innerHTML = "";
+          products.forEach(p => {
+            const div = document.createElement("div");
+            div.innerHTML = `
+              <form id="form-${p._id}">
+                <input type="text" name="name" value="${p.name}" />
+                <input type="number" name="price" value="${p.price}" />
+                <input type="text" name="image" value="${p.image}" />
+                <textarea name="description">${p.description}</textarea>
+                <button type="submit">Update</button>
+                <button type="button" onclick="deleteProduct('${p._id}')">Delete</button>
+              </form>
+              <hr />
+            `;
+
+            div.querySelector("form").addEventListener("submit", function (e) {
+              e.preventDefault();
+              const formData = new FormData(this);
+              const updated = {
+                name: formData.get("name"),
+                price: formData.get("price"),
+                image: formData.get("image"),
+                description: formData.get("description")
+              };
+
+              fetch(`http://localhost:5000/api/products/${p._id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(updated)
+              })
+                .then(res => res.json())
+                .then(data => {
+                  alert("Product updated!");
+                  loadProducts(); // refresh
+                });
+            });
+
+            productList.appendChild(div);
+          });
+        })
+        .catch(err => {
+          productList.innerHTML = "<p>Error loading products</p>";
+          console.error(err);
+        });
+    }
+
+    // Delete product
+    window.deleteProduct = function (id) {
+      if (!confirm("Are you sure?")) return;
+      fetch(`http://localhost:5000/api/products/${id}`, {
+        method: "DELETE"
+      })
+        .then(res => res.json())
+        .then(data => {
+          alert("Product deleted!");
+          loadProducts();
+        });
+    };
+
+    // Initial load
+    loadProducts();
+  });
+</script>
+
+</body>
+</html>

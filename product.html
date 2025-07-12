@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Product Details - MiniShop</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header>
+  <div class="logo">MiniShop</div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="products.html">Products</a>
+    <a href="cart.html">Cart</a>
+    <a href="login.html">Login</a>
+    <span id="userLinks"></span>
+  </nav>
+</header>
+
+<main id="productDetail">Loading...</main>
+
+<footer>
+  <p>© 2025 MiniShop. All rights reserved.</p>
+</footer>
+
+<script>
+  // ✅ Get product ID from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const productId = urlParams.get("id");
+
+  const productDetail = document.getElementById("productDetail");
+
+  if (!productId) {
+    productDetail.innerHTML = "<p>Invalid product ID.</p>";
+  } else {
+    fetch(`http://localhost:5000/api/products/${productId}`)
+      .then(res => res.json())
+      .then(product => {
+        productDetail.innerHTML = `
+          <div class="product-detail">
+            <img src="${product.image}" alt="${product.name}" />
+            <h2>${product.name}</h2>
+            <p>₹${product.price}</p>
+            <p>${product.description}</p>
+            <button onclick="addToCart('${product._id}', '${product.name}', ${product.price})">Add to Cart</button>
+          </div>
+        `;
+      })
+      .catch(err => {
+        console.error(err);
+        productDetail.innerHTML = "<p>Product not found.</p>";
+      });
+  }
+
+  function addToCart(id, name, price) {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const existing = cart.find(item => item.id === id);
+    if (existing) {
+      existing.qty += 1;
+    } else {
+      cart.push({ id, name, price, qty: 1 });
+    }
+    localStorage.setItem("cart", JSON.stringify(cart));
+    alert("Product added to cart!");
+  }
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const userLinks = document.getElementById("userLinks");
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      userLinks.innerHTML = `
+        <a href="profile.html">Profile</a> |
+        <a href="#" onclick="logout()">Logout</a>
+      `;
+    } else {
+      userLinks.innerHTML = `
+        <a href="login.html">Login</a> |
+        <a href="register.html">Register</a>
+      `;
+    }
+
+    window.logout = function () {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      alert("Logged out");
+      location.href = "login.html";
+    };
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Checkout - MiniShop</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <div class="logo">MiniShop</div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="products.html">Products</a>
+      <a href="cart.html">Cart</a>
+      <span id="userLinks">Login | Register</span>
+    </nav>
+  </header>
+
+  <main class="form-page">
+    <h2>Checkout</h2>
+    
+    <div id="checkout-items" style="margin-bottom: 20px;"></div>
+
+    <form id="checkoutForm">
+      <textarea id="address" placeholder="Enter delivery address" required rows="4" cols="50" style="width: 100%; padding: 10px;"></textarea><br><br>
+      <button type="submit" style="padding: 10px 20px;">Place Order</button>
+    </form>
+  </main>
+
+  <footer>
+    <p>© 2025 MiniShop. All rights reserved.</p>
+  </footer>
+
+ <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const checkoutItems = document.getElementById("checkout-items");
+
+    if (cart.length === 0) {
+      checkoutItems.innerHTML = "<p>Your cart is empty.</p>";
+      document.getElementById("checkoutForm").style.display = "none";
+      return;
+    }
+
+    let summary = "<ul>";
+    let total = 0;
+    cart.forEach(item => {
+      summary += `<li>${item.name} x ${item.qty} = ₹${item.qty * item.price}</li>`;
+      total += item.qty * item.price;
+    });
+    summary += `</ul><p><strong>Total: ₹${total}</strong></p>`;
+    checkoutItems.innerHTML = summary;
+
+    // ✅ NEW WORKING ORDER SUBMISSION CODE
+    document.getElementById("checkoutForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const token = localStorage.getItem("token");
+      const address = document.getElementById("address").value;
+
+      if (!token) {
+        alert("Please login to place your order.");
+        window.location.href = "login.html";
+        return;
+      }
+
+      fetch("http://localhost:5000/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ items: cart, address, total })
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.message === "Order placed successfully") {
+            alert("Order placed!");
+            localStorage.removeItem("cart");
+            window.location.href = "profile.html";
+          } else {
+            alert(data.message || "Failed to place order");
+          }
+        })
+        .catch(() => {
+          alert("Server error");
+        });
+    });
+  });
+</script>
+<script>
+    const userLinks = document.getElementById("userLinks");
+const token = localStorage.getItem("token");
+
+if (token) {
+  userLinks.innerHTML = `
+    <a href="profile.html">Profile</a> |
+    <a href="#" onclick="logout()">Logout</a>
+  `;
+} else {
+  userLinks.innerHTML = `
+    <a href="login.html">Login</a> |
+    <a href="register.html">Register</a>
+  `;
+}
+
+window.logout = function () {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  alert("Logged out");
+  window.location.href = "index.html";
+};
+</script>
+
+</body>
+</html>

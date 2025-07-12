@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Profile - MiniShop</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <header>
+    <div class="logo">MiniShop</div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="products.html">Products</a>
+      <a href="cart.html">Cart</a>
+      <span id="userLinks">Loading...</span>
+    </nav>
+  </header>
+
+  <main class="form-page">
+    <h2>My Profile</h2>
+    <div id="profileInfo"></div>
+    <h3 style="margin-top: 30px;">My Orders</h3>
+    <div id="orderList">Loading orders...</div>
+
+    <button onclick="logout()" style="margin-top: 20px;">Logout</button>
+  </main>
+
+  <footer>
+    <p>© 2025 MiniShop. All rights reserved.</p>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const token = localStorage.getItem("token");
+      const profileInfo = document.getElementById("profileInfo");
+
+      if (!token || !user) {
+        alert("Please login to view your profile.");
+        window.location.href = "login.html";
+        return;
+      }
+
+      profileInfo.innerHTML = `
+        <p><strong>Name:</strong> ${user.name}</p>
+        <p><strong>Email:</strong> ${user.email}</p>
+      `;
+
+      const userLinks = document.getElementById("userLinks");
+      userLinks.innerHTML = `
+        <a href="profile.html">Profile</a> |
+        <a href="#" onclick="logout()">Logout</a>
+      `;
+    });
+
+    function logout() {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      alert("Logged out successfully!");
+      window.location.href = "index.html";
+    }
+
+
+    // Fetch and show orders
+fetch("http://localhost:5000/api/orders/my", {
+  headers: { Authorization: `Bearer ${token}` }
+})
+  .then(res => res.json())
+  .then(orders => {
+    const orderList = document.getElementById("orderList");
+
+    if (!orders.length) {
+      orderList.innerHTML = "<p>No orders yet.</p>";
+      return;
+    }
+
+    orderList.innerHTML = orders.map(order => `
+      <div style="border: 1px solid #ddd; padding: 10px; margin: 10px 0;">
+        <p><strong>Placed on:</strong> ${new Date(order.createdAt).toLocaleString()}</p>
+        <p><strong>Address:</strong> ${order.address}</p>
+        <p><strong>Total:</strong> ₹${order.total}</p>
+        <ul>
+          ${order.items.map(item => `<li>${item.name} x ${item.qty}</li>`).join("")}
+        </ul>
+      </div>
+    `).join("");
+  })
+  .catch(() => {
+    document.getElementById("orderList").innerHTML = "<p>Error loading orders.</p>";
+  });
+
+  </script>
+
+</body>
+</html>

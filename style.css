@@ -1,0 +1,123 @@
+/* Reset & global styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  background-color: #f9f9f9;
+  color: #333;
+  padding-bottom: 50px;
+}
+a {
+  color: #333;
+  text-decoration: none;
+}
+a:hover {
+  color: #007bff;
+}
+
+/* Header and nav */
+header {
+  background-color: #fff;
+  padding: 20px;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+}
+nav a {
+  margin-right: 20px;
+  font-weight: 500;
+}
+#userLinks {
+  font-weight: bold;
+}
+
+/* Hero section */
+.hero {
+  background: #007bff;
+  color: #fff;
+  padding: 60px 20px;
+  text-align: center;
+}
+.hero h1 {
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+.hero p {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+.hero .btn {
+  background-color: #fff;
+  color: #007bff;
+  padding: 12px 24px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+/* Featured products */
+.featured-products {
+  padding: 40px 20px;
+  text-align: center;
+}
+.featured-products h2 {
+  margin-bottom: 20px;
+}
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+  max-width: 1000px;
+  margin: auto;
+}
+.product-card {
+  background-color: #fff;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.product-card img {
+  max-width: 100%;
+  height: auto;
+}
+.product-card h3 {
+  margin: 10px 0;
+}
+.product-card p {
+  font-weight: bold;
+  color: #007bff;
+}
+.product-card button {
+  margin-top: 10px;
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.product-card button:hover {
+  background-color: #0056b3;
+}
+
+/* Footer */
+footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: #eee;
+  text-align: center;
+  padding: 10px;
+  font-size: 14px;
+  border-top: 1px solid #ccc;
+}

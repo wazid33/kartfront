@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MiniShop - Home</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <header>
+    <div class="logo">MiniShop</div>
+    <nav>
+      <a href="admin.html">admin</a>
+      <a href="index.html">Home</a>
+      <a href="products.html">Products</a>
+      <a href="cart.html">Cart</a>
+      <span id="userLinks">Login | Register</span>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Welcome to MiniShop</h1>
+    <p>Your destination for the best shoes and kitchen deals!</p>
+    <a href="products.html" class="btn">Shop Now</a>
+  </section>
+
+  <section class="featured-products">
+    <h2>Featured Products</h2>
+    <div class="product-grid" id="product-list">
+      <!-- Products will be loaded here via JavaScript -->
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 MiniShop. All rights reserved.</p>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    const userLinks = document.getElementById("userLinks");
+const token = localStorage.getItem("token");
+
+if (token) {
+  userLinks.innerHTML = `
+    <a href="profile.html">Profile</a> |
+    <a href="#" onclick="logout()">Logout</a>
+  `;
+} else {
+  userLinks.innerHTML = `
+    <a href="login.html">Login</a> |
+    <a href="register.html">Register</a>
+  `;
+}
+
+window.logout = function () {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  alert("Logged out");
+  window.location.href = "index.html";
+};
+
+  </script>
+</body>
+</html>
