@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Load all products
     function loadProducts() {
-      fetch("http://localhost:5000/api/products")
+      fetch("https://kartbn.onrender.com/api/products")
         .then(res => res.json())
         .then(products => {
           if (!products.length) {
@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 description: formData.get("description")
               };
 
-              fetch(`http://localhost:5000/api/products/${p._id}`, {
+              fetch(`https://kartbn.onrender.com/api/products/${p._id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(updated)
