@@ -49,7 +49,7 @@
     const productList = document.getElementById("product-list");
 
     // Fetch products from backend
-    fetch("http://localhost:5000/api/products")
+    fetch("https://kartbn.onrender.com/api/products")
       .then(res => res.json())
       .then(products => {
         if (!products.length) {
@@ -101,7 +101,7 @@
 </script>
 <script>
 function loadAverageRating(productId) {
-  fetch(`http://localhost:5000/api/ratings/${productId}/average`)
+  fetch(`https://kartbn.onrender.com/api/ratings/${productId}/average`)
     .then(res => res.json())
     .then(data => {
       document.getElementById('avg-rating').innerText = `Average Rating: ${data.averageRating}4.2 / 5`;
@@ -127,7 +127,7 @@ function submitRating() {
   if (!productId) {
     container.innerHTML = "<p>Product not found!</p>";
   } else {
-    fetch(`http://localhost:5000/api/products/${productId}`)
+    fetch(`https://kartbn.onrender.com/api/products/${productId}`)
       .then(res => res.json())
       .then(product => {
         container.innerHTML = `
