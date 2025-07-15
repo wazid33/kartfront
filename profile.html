@@ -66,7 +66,7 @@
 
 
     // Fetch and show orders
-fetch("http://localhost:5000/api/orders/my", {
+fetch("https://kartbn.onrender.com/api/orders/my", {
   headers: { Authorization: `Bearer ${token}` }
 })
   .then(res => res.json())
