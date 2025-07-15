@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const image = document.getElementById("image").value;
     const description = document.getElementById("description").value;
 
-    fetch("http://localhost:5000/api/products", {
+    fetch("https://kartbn.onrender.com/api/products", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, price, image, description })
