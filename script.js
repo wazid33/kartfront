@@ -3,7 +3,7 @@
     const productList = document.getElementById("product-list");
 
     // Fetch products from backend
-    fetch("http://localhost:5000/api/products")
+    fetch("https://kartbn.onrender.com/api/products")
       .then(res => res.json())
       .then(products => {
         if (!products.length) {
