@@ -10,9 +10,9 @@
 <body>
 
   <header>
-    <div class="logo">MiniShop</div>
+    <div class="logo">Wahu</div>
     <nav>
-      <a href="admin.html">admin</a>
+     
       <a href="index.html">Home</a>
       <a href="products.html">Products</a>
       <a href="cart.html">Cart</a>
@@ -21,7 +21,7 @@
   </header>
 
   <section class="hero">
-    <h1>Welcome to MiniShop</h1>
+    <h1>Welcome to Wahu</h1>
     <p>Your destination for the best shoes and kitchen deals!</p>
     <a href="products.html" class="btn">Shop Now</a>
   </section>
@@ -34,7 +34,7 @@
   </section>
 
   <footer>
-    <p>© 2025 MiniShop. All rights reserved.</p>
+    <p>© 2025 WahuShop. All rights reserved.</p>
   </footer>
 
   <script src="script.js"></script>
@@ -44,12 +44,12 @@ const token = localStorage.getItem("token");
 
 if (token) {
   userLinks.innerHTML = `
-    <a href="profile.html">Profile</a> |
+    <a href="profile.html">Profile</a>|
     <a href="#" onclick="logout()">Logout</a>
   `;
 } else {
   userLinks.innerHTML = `
-    <a href="login.html">Login</a> |
+    <a href="login.html">Login</a>|
     <a href="register.html">Register</a>
   `;
 }

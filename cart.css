@@ -73,7 +73,7 @@ nav a {
   font-weight: bold;
 }
 h2{
-  color: #ff7300;
+  color: #ed4c02;
   padding-top: 30px;
 }
 /* Featured products */
@@ -85,35 +85,58 @@ h2{
   margin-bottom: 20px;
 }
 .product-grid {
-  display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 20px;
-  max-width: 1000px;
+  
+  max-width:400px;
   margin: auto;
 }
 .product-card {
-  background-color: #fff;
-  padding: 3px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  text-align: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    height: 90px;;
+    width: 400px;
+    background-color: #fffcfc;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    border-radius: 5px;
+    align-items: center;
+    margin: 2px;
 }
 .product-card img {
-  width: 100%;
-  height: 170px;
+  padding: 3px;             
+  width: 90px;
+  height: 87px;
 }
+
+
+.product-details{
+   width: 220px;
+   height: 80px;
+   text-align: left;  
+   padding-left: 5px; 
+}
+
 .product-card h3{
+ padding-left: 4px;
+  text-align: left;
   font-size:12px;
   color: #0000007f;
 }
 .product-card p {
+  padding-bottom: 1px;
   font-weight: 10px;
-  color: #040000;
+  color: #0000007f;
 }
+
+.product-price{
+               width: 150px;
+               height: 100%;
+               text-align: left;
+              
+}
+
+
 .product-card button {
-  margin-top: 10px;
-  padding: 8px 16px;
+  
+  padding: 5px 10px;
   background-color: #01771b;
   color: #fff;
   border: none;
@@ -124,7 +147,13 @@ h2{
   background-color: #0056b3;
 }
 
-/* Footer */
+
+
+
+
+
+
+
 footer {
   position: fixed;
   bottom: 0;

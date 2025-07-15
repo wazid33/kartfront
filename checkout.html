@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Checkout - MiniShop</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="checkout.css" />
 </head>
 <body>
 
@@ -17,17 +17,35 @@
       <span id="userLinks">Login | Register</span>
     </nav>
   </header>
-
+  <div class="content">
   <main class="form-page">
     <h2>Checkout</h2>
-    
+    <div class="item">
     <div id="checkout-items" style="margin-bottom: 20px;"></div>
-
+    </div>
+    <h3>Delivery address</h3>
+    <div class="form">
     <form id="checkoutForm">
-      <textarea id="address" placeholder="Enter delivery address" required rows="4" cols="50" style="width: 100%; padding: 10px;"></textarea><br><br>
-      <button type="submit" style="padding: 10px 20px;">Place Order</button>
+      <input type="text" id="customerName" placeholder="Enter your name">
+<br>
+<input type="number" id="phone" placeholder="Enter your phone no.">
+<br>
+<input type="text" id="street" placeholder="Street no. / Building name">
+<br>
+<input type="text" id="fullAddress" placeholder="Enter your address">
+<br>
+<input type="number" id="pincode" placeholder="Pincode">
+<br>
+<input type="text" id="city" placeholder="City">
+<br>
+<input type="text" id="state" placeholder="State">
+<br>
+<button type="submit" style="padding: 10px 20px;">Place Order</button>
+
     </form>
+    </div>
   </main>
+</div>
 
   <footer>
     <p>© 2025 MiniShop. All rights reserved.</p>
@@ -47,7 +65,7 @@
     let summary = "<ul>";
     let total = 0;
     cart.forEach(item => {
-      summary += `<li>${item.name} x ${item.qty} = ₹${item.qty * item.price}</li>`;
+      summary += `<li><div class="bb">${item.name}</div> x <div class="aa"> ${item.qty} = ₹${item.qty * item.price}<div></li>`;
       total += item.qty * item.price;
     });
     summary += `</ul><p><strong>Total: ₹${total}</strong></p>`;
@@ -55,39 +73,55 @@
 
     // ✅ NEW WORKING ORDER SUBMISSION CODE
     document.getElementById("checkoutForm").addEventListener("submit", function (e) {
-      e.preventDefault();
+  e.preventDefault();
 
-      const token = localStorage.getItem("token");
-      const address = document.getElementById("address").value;
+  const token = localStorage.getItem("token");
 
-      if (!token) {
-        alert("Please login to place your order.");
-        window.location.href = "login.html";
-        return;
+  if (!token) {
+    alert("Please login to place your order.");
+    window.location.href = "login.html";
+    return;
+  }
+
+  const address = {
+    name: document.getElementById("customerName").value,
+    phone: document.getElementById("phone").value,
+    street: document.getElementById("street").value,
+    fullAddress: document.getElementById("fullAddress").value,
+    pincode: document.getElementById("pincode").value,
+    city: document.getElementById("city").value,
+    state: document.getElementById("state").value
+  };
+
+  // 🛒 Place Order to Backend
+  fetch("http://localhost:5000/api/orders", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify({ items: cart, address, total })
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.message === "Order placed successfully") {
+        alert("Order placed!");
+
+        // 💳 Payment Handling Here (Optional Step)
+        // Example — Redirect to Payment Page
+        window.location.href = `payment.html?amount=${total}&orderId=${data.orderId}`;
+
+
+        localStorage.removeItem("cart");
+      } else {
+        alert(data.message || "Failed to place order");
       }
-
-      fetch("http://localhost:5000/api/orders", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ items: cart, address, total })
-      })
-        .then(res => res.json())
-        .then(data => {
-          if (data.message === "Order placed successfully") {
-            alert("Order placed!");
-            localStorage.removeItem("cart");
-            window.location.href = "profile.html";
-          } else {
-            alert(data.message || "Failed to place order");
-          }
-        })
-        .catch(() => {
-          alert("Server error");
-        });
+    })
+    .catch(() => {
+      alert("Server error");
     });
+});
+
   });
 </script>
 <script>

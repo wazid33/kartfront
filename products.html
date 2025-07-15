@@ -9,7 +9,7 @@
 <body>
 
   <header>
-    <div class="logo">MiniShop</div>
+    <div class="logo">Wahu</div>
     <nav>
       <a href="index.html">Home</a>
       <a href="products.html">Products</a>
@@ -21,21 +21,60 @@
   <main class="featured-products">
     <h2>All Products</h2>
     <div class="product-grid" id="product-list"></div>
+    
   </main>
   
-    <main> 
-      <h2>All Products</h2>
-      <!-- Products will be loaded here via JS -->
-       <div class="product-grid" id="product-list"></div>
-       <button onclick="addToCart('${product._id}', '${product.name}', )">Add to Cart</button>
-
-  </main>
+   
 
   <footer>
-    <p>© 2025 MiniShop. All rights reserved.</p>
+    <p>© 2025 WahuShop. All rights reserved.</p>
   </footer>
 
-  <script src="script.js"></script>
+  
+    <script>
+  const productList = document.getElementById('product-list');
+
+  fetch('http://localhost:5000/api/products')
+    .then(res => res.json())
+    .then(products => {
+      if (!products.length) {
+        productList.innerHTML = "<p>No products found.</p>";
+        return;
+      }
+
+      products.forEach(product => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
+          <a href="product.html?id=${product._id}">
+            <img src="${product.image}" alt="${product.name}" />
+            <h3>${product.name}</h3>
+          </a>
+          <p>₹${product.price}</p>
+          <button onclick="addToCart('${product._id}', '${product.image}', '${product.name}', ${product.price})">Add to Cart</button>
+        `;
+        productList.appendChild(card);
+      });
+    })
+    .catch(err => {
+      productList.innerHTML = "<p>Error loading products.</p>";
+      console.error(err);
+    });
+
+  function addToCart(id, image, name, price) {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    let existing = cart.find(item => item.id === id);
+    if (existing) {
+      existing.qty += 1;
+    } else {
+      cart.push({ id, image, name, price, qty: 1 });
+    }
+    localStorage.setItem("cart", JSON.stringify(cart));
+    alert("Added to cart!");
+  }
+</script>
+
+  
   <script>
     const userLinks = document.getElementById("userLinks");
 const token = localStorage.getItem("token");

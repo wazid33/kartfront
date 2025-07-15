@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Product Details - MiniShop</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="product.css" />
 </head>
 <body>
 
@@ -14,83 +14,180 @@
     <a href="index.html">Home</a>
     <a href="products.html">Products</a>
     <a href="cart.html">Cart</a>
-    <a href="login.html">Login</a>
-    <span id="userLinks"></span>
+    <span id="userLinks">Login | Register</span>
   </nav>
 </header>
+<div class="view">
+<main class="product-detail">
+  
+  <div id="productContainer">Loading...</div>
+  <div id="avg-rating">Loading average rating...</div>
+</main>
+<div class="rate-input">
+  <label>Rate this product:</label>
+  <select id="user-rating">
+    <option value="1">1 Star</option>
+    <option value="2">2 Stars</option>
+    <option value="3">3 Stars</option>
+    <option value="4">4 Stars</option>
+    <option value="5">5 Stars</option>
+  </select>
+  <button onclick="submitRating()">Submit</button>
+</div>
+</div>
 
-<main id="productDetail">Loading...</main>
-
+<main class="featured-products">
+    <h2>Other Products</h2>
+    <div class="product-grid" id="product-list"></div>
+    
+  </main>
 <footer>
   <p>© 2025 MiniShop. All rights reserved.</p>
 </footer>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const productList = document.getElementById("product-list");
+
+    // Fetch products from backend
+    fetch("http://localhost:5000/api/products")
+      .then(res => res.json())
+      .then(products => {
+        if (!products.length) {
+          productList.innerHTML = "<p>No products found.</p>";
+          return;
+        }
+
+        productList.innerHTML = ""; // Clear old content
+
+        products.forEach(product => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
+          <a href="product.html?id=${product._id}">
+            <img src="${product.image}" alt="${product.name}" />
+            <h3>${product.name}</h3>
+          </a>
+          <p>₹${product.price}</p>
+          <button onclick="addToCart('${product._id}', '${product.image}','${product.name}', ${product.price})">Add to Cart</button>
+        `;
+        productList.appendChild(card);
+      });
+    })
+      .catch(err => {
+        console.error("Error loading products:", err);
+        productList.innerHTML = "<p>Error loading products.</p>";
+      });
+
+    // Show Admin Link if User is Admin
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.role === "admin") {
+      document.querySelector("nav").innerHTML += `<a href="admin.html">Admin</a>`;
+    }
+  });
+
+  // Add to Cart function with image saved
+  function addToCart(id, image, name, price) {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    let existing = cart.find(item => item.id === id);
+    if (existing) {
+      existing.qty += 1;
+    } else {
+      cart.push({ id, image, name, price, qty: 1 });
+    }
+    localStorage.setItem("cart", JSON.stringify(cart));
+    alert("Added to cart!");
+  }
+
+</script>
+<script>
+function loadAverageRating(productId) {
+  fetch(`http://localhost:5000/api/ratings/${productId}/average`)
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById('avg-rating').innerText = `Average Rating: ${data.averageRating}4.2 / 5`;
+    });
+}
+
+// Example usage:
+loadAverageRating('123456');
+</script>
+<script>
+function submitRating() {
+  const rating = document.getElementById('user-rating').value;
+  // Send to backend here
+  alert(`You rated ${rating} star(s)!`);
+}
+</script>
 
 <script>
-  // ✅ Get product ID from URL
   const urlParams = new URLSearchParams(window.location.search);
-  const productId = urlParams.get("id");
-
-  const productDetail = document.getElementById("productDetail");
+  const productId = urlParams.get('id');
+  const container = document.getElementById('productContainer');
 
   if (!productId) {
-    productDetail.innerHTML = "<p>Invalid product ID.</p>";
+    container.innerHTML = "<p>Product not found!</p>";
   } else {
     fetch(`http://localhost:5000/api/products/${productId}`)
       .then(res => res.json())
       .then(product => {
-        productDetail.innerHTML = `
-          <div class="product-detail">
-            <img src="${product.image}" alt="${product.name}" />
-            <h2>${product.name}</h2>
-            <p>₹${product.price}</p>
-            <p>${product.description}</p>
-            <button onclick="addToCart('${product._id}', '${product.name}', ${product.price})">Add to Cart</button>
+        container.innerHTML = `
+          
+          <img src="${product.image}" alt="${product.name}"/>
+          <div class="product-info">
+           <h3>${product.name}</h3>
+           <div class="rating">
+            ★★★★★
+            <span id="rating-value">0</span>/5
+            </div>
+
+          <p><strong>Price:</strong> ₹${product.price}</p>
+          
+          <button onclick="addToCart('${product._id}', '${product.image}', '${product.name}', ${product.price})">Add to Cart</button>
+          <p>${product.description}</p>
           </div>
-        `;
+          `;
       })
       .catch(err => {
+        container.innerHTML = "<p>Error loading product.</p>";
         console.error(err);
-        productDetail.innerHTML = "<p>Product not found.</p>";
       });
   }
-
-  function addToCart(id, name, price) {
+ 
+  function addToCart(id, image, name, price) {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const existing = cart.find(item => item.id === id);
+    let existing = cart.find(item => item.id === id);
     if (existing) {
       existing.qty += 1;
     } else {
-      cart.push({ id, name, price, qty: 1 });
+      cart.push({ id, image, name, price, qty: 1 });
     }
     localStorage.setItem("cart", JSON.stringify(cart));
-    alert("Product added to cart!");
+    alert("Added to cart!");
   }
 </script>
 
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const userLinks = document.getElementById("userLinks");
-    const token = localStorage.getItem("token");
+  const userLinks = document.getElementById("userLinks");
+  const token = localStorage.getItem("token");
 
-    if (token) {
-      userLinks.innerHTML = `
-        <a href="profile.html">Profile</a> |
-        <a href="#" onclick="logout()">Logout</a>
-      `;
-    } else {
-      userLinks.innerHTML = `
-        <a href="login.html">Login</a> |
-        <a href="register.html">Register</a>
-      `;
-    }
+  if (token) {
+    userLinks.innerHTML = `
+      <a href="profile.html">Profile</a> |
+      <a href="#" onclick="logout()">Logout</a>
+    `;
+  } else {
+    userLinks.innerHTML = `
+      <a href="login.html">Login</a> |
+      <a href="register.html">Register</a>
+    `;
+  }
 
-    window.logout = function () {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      alert("Logged out");
-      location.href = "login.html";
-    };
-  });
+  window.logout = function () {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    alert("Logged out");
+    window.location.href = "index.html";
+  };
 </script>
 
 </body>

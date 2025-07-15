@@ -12,13 +12,15 @@ fetch("http://localhost:5000/api/products")
 
     data.forEach(product => {
       const div = document.createElement("div");
-      div.innerHTML = `
-        <img src="${product.image}" alt="${product.name}" />
-        <h3>${product.name}</h3>
-        <p>₹${product.price}</p>
-        <p>${product.description}</p>
-        <button onclick="addToCart('${product._id}')">Add to Cart</button>
-      `;
+      card.innerHTML = `
+          <a href="product.html?id=${product._id}">
+          <img src="${product.image}" alt="${product.name}" />
+          <h3>${product.name}</h3>
+          </a>
+          <p>₹${product.price}</p>
+          <button onclick="addToCart('${product._id}', '${product.name}', ${product.price})">Add to Cart</button>
+           `;
+
       container.appendChild(div);
     });
   })
